@@ -1,2 +1,3 @@
 smtp_venv_app/
-/*.env/
+.env
+**/.env
