@@ -12,7 +12,47 @@ sender_email = settings.sender_email
 smtp_server_name = settings.smtp_server_name
 email_password = settings.email_password
 
-def send_email(recipient_email: Annotated[str, None] = None):
+def get_smtp_server(email):  
+    smtp_servers = {  
+        "gmail.com": "smtp.gmail.com",  
+        "outlook.com": "smtp.live.com",  
+        "hotmail.com": "smtp.live.com",  
+        "office365.com": "smtp.office365.com",  
+        "yahoo.com": "smtp.mail.yahoo.com",  
+        "yahoo.co.uk": "smtp.mail.yahoo.co.uk",  
+        "ntlworld.com": "smtp.ntlworld.com",  
+        "btconnect.com": "smtp.btconnect.com",  
+        "btopenworld.com": "mail.btopenworld.com",  
+        "btinternet.com": "mail.btinternet.com",  
+        "orange.net": "smtp.orange.net",  
+        "orange.co.uk": "smtp.orange.co.uk",  
+        "wanadoo.co.uk": "smtp.wanadoo.co.uk",  
+        "comcast.net": "smtp.comcast.net",  
+        "verizon.net": "outgoing.verizon.net",  
+        "zoho.com": "smtp.zoho.com",  
+        "mail.com": "smtp.mail.com",  
+        "gmx.com": "smtp.gmx.com",  
+        "o2.ie": "smtp.o2.ie",  
+        "o2.co.uk": "smtp.o2.co.uk",  
+        "att.yahoo.com": "smtp.att.yahoo.com",  
+        "1and1.com": "smtp.1and1.com",  
+        "1und1.de": "smtp.1und1.de",  
+        "t-online.de": "securesmtp.t-online.de"  
+    }  
+    
+    # Extract the domain from the email  
+    domain = email.split('@')[-1]  
+    
+    # Return the corresponding SMTP server or None if not found  
+    return smtp_servers.get(domain, None)  
+
+# Example usage  
+# email = "rafay@outlook.com"  
+# smtp_server = get_smtp_server(email)  
+# print(smtp_server)  # Output: smtp.gmail.com
+
+def send_email(recipient_email: Annotated[str, None] = None,):
+
     # Read the HTML message from file
     with open('email_template.html', 'r') as file:
         html_content = file.read()
