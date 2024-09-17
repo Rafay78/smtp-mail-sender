@@ -1,17 +1,14 @@
-from typing import Annotated
 from fastapi import FastAPI
-
-from ops import send_email
+from fastapi.middleware.cors import CORSMiddleware
+from routes import router
 
 app = FastAPI()
+app.include_router(router)
 
-
-
-@app.get('/')
-def land():
-    return {"msg": "welcome to the email server"}
-
-
-@app.get('/send-email')
-def send_mail(recipient_email: Annotated[str, None] = None):
-    send_email(recipient_email)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins, replace with specific domain for production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
