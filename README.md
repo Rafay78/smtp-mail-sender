@@ -6,6 +6,8 @@ It can send emails in batch for your business
 
 Installation steps:
 
+### Firstly, you will need the `client_secret.json` file for this project to make it functional.
+
 1. Clone the repository:
 
    ```bash
@@ -30,6 +32,7 @@ Installation steps:
    SENDER_EMAIL="xyz@gmail.com"
    EMAIL_PASSWORD="712365"
    SMTP_SERVER_NAME="Smtp.gmail.com"
+   DATABASE_HOSTNAME="localhost"
    ```
 
 5. Start the application:

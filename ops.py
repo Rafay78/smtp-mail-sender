@@ -1,9 +1,39 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
+from sqlalchemy.orm import Session
 from settings import settings
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
 from typing import Annotated, Union
+import models
+import schema
+from db import get_db
+import base64 
+import os.path 
+from google.auth.transport.requests import Request 
+from google.oauth2.credentials import Credentials 
+from google_auth_oauthlib.flow import InstalledAppFlow
+
+SCOPES = ['https://mail.google.com/']
+USER_TOKENS = 'token.json'
+
+CREDENTIALS = 'C:\YouTube\dev\credentials.json'
+
+def getToken() -> str:
+    creds = None
+    if os.path.exists(USER_TOKENS):
+        creds = Credentials.from_authorized_user_file(USER_TOKENS, SCOPES)
+        creds.refresh(Request())
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS, SCOPES)
+                creds = flow.run_local_server(port=0)
+            # Save the credentials for the next run
+            with open(USER_TOKENS, 'w') as token:
+                token.write(creds.to_json())
+                return creds.token
 
 
 
@@ -50,6 +80,19 @@ def get_smtp_server(email):
 # email = "rafay@outlook.com"  
 # smtp_server = get_smtp_server(email)  
 # print(smtp_server)  # Output: smtp.gmail.com
+
+def get_or_create_user(user: schema.User, db: Session):
+    existing_user = db.query(models.Users).filter_by(email=user.email).first()
+    if existing_user:
+        return existing_user
+
+    new_user = models.Users(name=user.name, email=user.email, image_url=str(user.picture))
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return new_user
 
 def send_email(recipient_email: Annotated[str, None] = None,):
 

@@ -2,3 +2,6 @@ smtp_venv_app/
 .env
 **/.env
 replacements.txt
+venv/
+
+client_secret.json
